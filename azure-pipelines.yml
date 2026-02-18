@@ -1,0 +1,31 @@
+trigger:
+- none
+
+name: $(Date:yyyyMMdd).$(Rev:r)
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '18.x'
+
+stages:
+- stage: Build
+  displayName: Build Angular
+  jobs:
+  - job: BuildJob
+    steps:
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+
+    - script: |
+        npm install
+        npm run build -- --configuration=production
+      displayName: Build Angular
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: 'dist'
+        artifactName: 'angular-app'
